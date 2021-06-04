@@ -1,0 +1,45 @@
+name: print hello
+
+on: [push, pull_request]
+
+jobs:
+  build_wheels:
+    name: Check on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+
+    steps:
+    - name: Cancel previous runs on the same branch
+      if: ${{ github.ref != 'refs/heads/main' }}
+      uses: styfle/cancel-workflow-action@0.7.0
+      with:
+        access_token: ${{ github.token }}
+
+    - name: Checkout code
+      uses: actions/checkout@v2
+      with:
+        submodules: recursive
+
+    - uses: actions/setup-python@v2
+      name: Install Python
+      with:
+        python-version: '3.8'
+
+    - name: Install boost 1_76
+      run: wget -nv -O boost_1_76_0.tar.gz https://boostorg.jfrog.io/artifactory/main/release/1.76.0/source/boost_1_76_0.tar.gz &&
+        tar xzf boost_1_76_0.tar.gz && cd boost_1_76_0/ && ./bootstrap.sh --with-python=/usr/bin/python3.8 --with-python-version=3.8 && ./b2  -j `nproc` && sudo ./b2 install -j `nproc`
+
+    - name: cmake, print hello
+      run: |
+        mkdir build
+        cd build
+        cmake ../
+        cmake --build . -- -j 6
+        cd ..
+        python3 -m venv .venv
+        . .venv/bin/activate
+        pip3 install .
+        python3 ./test/test.py
