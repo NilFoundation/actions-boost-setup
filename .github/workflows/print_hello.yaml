@@ -28,9 +28,18 @@ jobs:
       with:
         python-version: '3.8'
 
-    - name: Install boost 1_76
-      run: wget -nv -O boost_1_76_0.tar.gz https://boostorg.jfrog.io/artifactory/main/release/1.76.0/source/boost_1_76_0.tar.gz &&
-        tar xzf boost_1_76_0.tar.gz && cd boost_1_76_0/ && ./bootstrap.sh --with-python=/usr/bin/python3.8 --with-python-version=3.8 && ./b2  -j `nproc` && sudo ./b2 install -j `nproc`
+    - name: Install boost
+      env:
+        CACHE_HIT: ${{steps.cache-boost.outputs.cache-hit}}
+      run: |
+        if [[ "$CACHE_HIT" == 'true' ]]; then
+          sudo cp --force --recursive ~/boost/* /
+        else
+          wget -nv -O boost_1_76_0.tar.gz https://boostorg.jfrog.io/artifactory/main/release/1.76.0/source/boost_1_76_0.tar.gz &&
+          tar xzf boost_1_76_0.tar.gz && cd boost_1_76_0/ &&
+          ./bootstrap.sh --with-python=/usr/bin/python3.8 --with-python-version=3.8 && ./b2 -j `nproc`
+        fi
+        sudo ./b2 install -j `nproc`
 
     - name: cmake and build
       run: |
