@@ -36,10 +36,10 @@ jobs:
         key: ${{ runner.os }}-boost
 
     - name: Echo cache
-      run: echo $steps.cache-primes.outputs.cache-hit
+      run: echo $(steps.cache-boost.outputs.cache-hit)
 
     - name: Pre-install boost
-      if: steps.cache-primes.outputs.cache-hit != 'true'
+      if: steps.cache-boost.outputs.cache-hit != 'true'
       run: |
         wget -nv -O boost_1_76_0.tar.gz https://boostorg.jfrog.io/artifactory/main/release/1.76.0/source/boost_1_76_0.tar.gz &&
         tar xzf boost_1_76_0.tar.gz && cd boost_1_76_0/ &&
@@ -58,6 +58,9 @@ jobs:
         python3 -m venv .venv
         . .venv/bin/activate
         pip3 install .
+
+    - name: pwd
+      run: pwd
 
     - name: print hello
       run: |
