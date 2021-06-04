@@ -32,7 +32,7 @@ jobs:
       run: wget -nv -O boost_1_76_0.tar.gz https://boostorg.jfrog.io/artifactory/main/release/1.76.0/source/boost_1_76_0.tar.gz &&
         tar xzf boost_1_76_0.tar.gz && cd boost_1_76_0/ && ./bootstrap.sh --with-python=/usr/bin/python3.8 --with-python-version=3.8 && ./b2  -j `nproc` && sudo ./b2 install -j `nproc`
 
-    - name: cmake, print hello
+    - name: cmake and build
       run: |
         mkdir build
         cd build
@@ -42,4 +42,7 @@ jobs:
         python3 -m venv .venv
         . .venv/bin/activate
         pip3 install .
+
+    - name: print hello
+      run: |
         python3 ./test/test.py
