@@ -32,8 +32,11 @@ jobs:
       id: cache-boost
       uses: actions/cache@v2
       with:
-        path: ~/boost_1_76_0
+        path: boost_1_76_0
         key: ${{ runner.os }}-boost
+
+    - name: Echo cache
+      run: echo $steps.cache-primes.outputs.cache-hit
 
     - name: Pre-install boost
       if: steps.cache-primes.outputs.cache-hit != 'true'
@@ -42,8 +45,8 @@ jobs:
         tar xzf boost_1_76_0.tar.gz && cd boost_1_76_0/ &&
         ./bootstrap.sh --with-python=/usr/bin/python3.8 --with-python-version=3.8 && ./b2 -j `nproc`
 
-    - name: Pre-install boost
-      run: sudo ./b2 install -j `nproc`
+    - name: Install boost
+      run: sudo boost_1_76_0/b2 install -j `nproc`
 
     - name: cmake and build
       run: |
