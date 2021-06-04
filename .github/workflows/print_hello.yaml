@@ -28,25 +28,28 @@ jobs:
       with:
         python-version: '3.8'
 
+    - name: pwd
+      run: pwd
+
+    - name: ls
+      run: ls -la
+
     - name: Cache boost
       id: cache-boost
       uses: actions/cache@v2
       with:
-        path: boost_1_76_0
+        path: "~/boost"
         key: ${{ runner.os }}-boost
-
-    - name: Echo cache
-      run: echo $(steps.cache-boost.outputs.cache-hit)
 
     - name: Pre-install boost
       if: steps.cache-boost.outputs.cache-hit != 'true'
       run: |
         wget -nv -O boost_1_76_0.tar.gz https://boostorg.jfrog.io/artifactory/main/release/1.76.0/source/boost_1_76_0.tar.gz &&
-        tar xzf boost_1_76_0.tar.gz && cd boost_1_76_0/ &&
+        tar xzf boost_1_76_0.tar.gz ~/boost && cd ~/boost &&
         ./bootstrap.sh --with-python=/usr/bin/python3.8 --with-python-version=3.8 && ./b2 -j `nproc`
 
     - name: Install boost
-      run: sudo boost_1_76_0/b2 install -j `nproc`
+      run: sudo ~/boost/b2 install -j `nproc`
 
     - name: cmake and build
       run: |
