@@ -59,16 +59,18 @@ jobs:
       - name: Install boost
         run: cd ~/boost/boost_1_76_0/ && sudo ./b2 install -j `nproc`
 
-#      - name: cmake and build
-#        run: |
-#          mkdir build
-#          cd build
-#          cmake ../
-#          cmake --build . -- -j 6
-#          cd ..
-#          python3 -m venv .venv
-#          . .venv/bin/activate
-#          pip3 install .
+      - name: cmake and build
+        run: |
+          mkdir build
+          cd build
+          cmake ../
+          cmake --build . -- -j 6
+          cd ..
+          python3 -m venv .venv
+          . .venv/bin/activate
+          pip3 install .
+          pwd
+          python3 ./test/test.py
 #
 #      - name: print hello
 #        run: |
