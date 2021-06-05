@@ -29,7 +29,9 @@ jobs:
           python-version: '3.8'
 
       - name: Chown for boost
-        run: sudo chown -R $USER:$USER /usr/local/include/
+        run: |
+          sudo chown -R $USER:$USER /usr/local/include/
+          sudo chown -R $USER:$USER /usr/local/lib/
 
       - name: ls
         run: ls -la
