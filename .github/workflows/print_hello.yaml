@@ -44,8 +44,8 @@ jobs:
             /usr/local/include/boost
             /usr/local/lib/cmake/boost_*
             /usr/local/lib/libboost_*
-            /usr/local/lib/cmake/Boost-*
-          key: ${{ runner.os }}-boost-more-cache
+            /usr/local/lib/cmake/Boost*
+          key: ${{ runner.os }}-boost-more-cache1
 
       - name: Pre-install boost
         if: steps.cache-boost.outputs.cache-hit != 'true'
