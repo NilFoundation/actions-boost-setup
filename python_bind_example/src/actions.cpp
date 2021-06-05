@@ -7,7 +7,7 @@ using namespace boost::python;
 
 std::string greet()
 {
-  return "Hello, world!";
+  return "Hello, world with cache!";
 }
 
 BOOST_PYTHON_MODULE(actions)
