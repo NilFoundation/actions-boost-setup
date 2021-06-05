@@ -39,7 +39,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: "~/boost"
-          key: ${{ runner.os }}-boost-new
+          key: ${{ runner.os }}-boost-new4
 
       - name: Pre-install boost
         if: steps.cache-boost.outputs.cache-hit != 'true'
