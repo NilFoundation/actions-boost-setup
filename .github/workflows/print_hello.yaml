@@ -38,8 +38,12 @@ jobs:
         id: cache-boost
         uses: actions/cache@v2
         with:
-          path: "~/boost"
-          key: ${{ runner.os }}-boost-new4
+          path: |
+            /usr/local/include/boost
+            /usr/local/lib/cmake/boost_*
+            /usr/local/lib/libboost_*
+            /usr/local/lib/cmake/Boost-*
+          key: ${{ runner.os }}-boost-more-cache
 
       - name: Pre-install boost
         if: steps.cache-boost.outputs.cache-hit != 'true'
@@ -48,16 +52,16 @@ jobs:
           wget -nv -O boost_1_76_0.tar.gz https://boostorg.jfrog.io/artifactory/main/release/1.76.0/source/boost_1_76_0.tar.gz &&
           tar xzf boost_1_76_0.tar.gz -C ~/boost && cd ~/boost/boost_1_76_0/ &&
           ./bootstrap.sh --with-python=/usr/bin/python3.8 --with-python-version=3.8 &&
-          ./b2 -j `nproc`
+          ./b2 -j `nproc` &&  ./b2 install -j `nproc`
 
-      - name: ls
-        run: ls -la ~/boost/
-
-      - name: ls
-        run: ls -la ~/boost/boost_1_76_0
-
-      - name: Install boost
-        run: cd ~/boost/boost_1_76_0/ && sudo ./b2 install -j `nproc`
+#      - name: ls
+#        run: ls -la ~/boost/
+#
+#      - name: ls
+#        run: ls -la ~/boost/boost_1_76_0
+#
+#      - name: Install boost
+#        run: cd ~/boost/boost_1_76_0/ && sudo ./b2 install -j `nproc`
 
       - name: cmake and build
         run: |
