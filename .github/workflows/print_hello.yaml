@@ -25,7 +25,8 @@ jobs:
         id: set_env_value
         run: |
           echo "workspace=$GITHUB_WORKSPACE" >> $GITHUB_ENV
-          echo "root_workspace=$GITHUB_WORKSPACE/../" >> $GITHUB_ENV
+          cd $GITHUB_WORKSPACE/../
+          echo "root_workspace=$(pwd)" >> $GITHUB_ENV
           echo "boost_version_load=$(echo ${{ env.boost_version }} | sed "s/\./\_/g")"  >> $GITHUB_ENV
 
       - name: Checkout code
@@ -44,11 +45,8 @@ jobs:
         uses: actions/cache@v2
         with:
           path: |
-            ~/boost
-          key: ${{ runner.os }}-boost-more-cache7
-
-      - name: echo1
-        run: echo $GITHUB_WORKFLOW
+            ${{ env.root_workspace }}/boost
+          key: ${{ runner.os }}-boost-more-cache8
 
       - name: Install boost
         if: steps.cache-boost.outputs.cache-hit != 'true'
@@ -56,7 +54,7 @@ jobs:
           wget -nv -O boost.tar.gz https://boostorg.jfrog.io/artifactory/main/release/${{ env.boost_version }}/source/boost_${{ env.boost_version_load }}.tar.gz &&
           tar xzf boost.tar.gz -C ~/ &&
           cd ~/boost_${{ env.boost_version_load }}/ &&
-          ./bootstrap.sh --with-python=/usr/bin/python${{ env.python_version }} --with-python-version=${{ env.python_version }} --prefix=~/boost &&
+          ./bootstrap.sh --with-python=/usr/bin/python${{ env.python_version }} --with-python-version=${{ env.python_version }} --prefix=${{ env.root_workspace }}/boost &&
           ./b2 -j `nproc` &&  sudo ./b2 install -j `nproc`
 
       - name: echo1
@@ -72,12 +70,12 @@ jobs:
         run: |
           mkdir build
           cd build
-          cmake .. -DBOOST_ROOT=~/boost
+          cmake .. -DBOOST_ROOT=${{ env.root_workspace }}/boost
           cmake --build . -- -j `nproc`
           cd ..
-          export BOOST_ROOT=~/boost
-          export BOOST_INCLUDE=~/boost/include
-          export BOOST_LIBDIR=~/boost/lib
+          export BOOST_ROOT=${{ env.root_workspace }}/boost
+          export BOOST_INCLUDE=${{ env.root_workspace }}/boost/include
+          export BOOST_LIBDIR=${{ env.root_workspace }}/boost/lib
           python3 -m venv .venv
           . .venv/bin/activate
           pip3 install .
