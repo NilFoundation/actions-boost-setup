@@ -47,6 +47,9 @@ jobs:
             ~/boost
           key: ${{ runner.os }}-boost-more-cache7
 
+      - name: echo1
+        run: echo $GITHUB_WORKFLOW
+
       - name: Install boost
         if: steps.cache-boost.outputs.cache-hit != 'true'
         run: |
