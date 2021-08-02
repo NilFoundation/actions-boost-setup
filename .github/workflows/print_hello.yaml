@@ -54,7 +54,7 @@ jobs:
 #            ${{ env.BOOST_PATH }}/lib/cmake/boost_*
 #            ${{ env.BOOST_PATH }}/lib/libboost_*
 #            ${{ env.BOOST_PATH }}/lib/cmake/Boost*
-          key: ${{ runner.os }}-boost-more-cache2-${{ GITHUB_WORKSPACE }}
+          key: ${{ runner.os }}-boost-more-cache2-${{ env.GITHUB_WORKSPACE }}
 
       - name: Pre-install boost
         if: steps.cache-boost.outputs.cache-hit != 'true'
