@@ -34,10 +34,10 @@ jobs:
         with:
           python-version: '3.8'
 
-      - name: Chown for boost
-        run: |
-          sudo chown -R $USER:$USER ${{ env.BOOST_PATH }}/include/
-          sudo chown -R $USER:$USER ${{ env.BOOST_PATH }}/lib/
+#      - name: Chown for boost
+#        run: |
+#          sudo chown -R $USER:$USER ${{ env.BOOST_PATH }}/include/
+#          sudo chown -R $USER:$USER ${{ env.BOOST_PATH }}/lib/
 
       - name: ls
         run: ls -la
@@ -62,14 +62,14 @@ jobs:
           wget -nv -O boost_1_76_0.tar.gz https://boostorg.jfrog.io/artifactory/main/release/1.76.0/source/boost_1_76_0.tar.gz &&
           tar xzf boost_1_76_0.tar.gz -C ~/ && cd ~/boost_1_76_0/ &&
           ./bootstrap.sh --with-python=/usr/bin/python3.8 --with-python-version=3.8 &&
-          ./b2 --prefix ${{ GITHUB_WORKSPACE }} -j `nproc` &&  sudo ./b2 install --prefix ${{ GITHUB_WORKSPACE }} -j `nproc`
+          ./b2 --prefix ${{ env.GITHUB_WORKSPACE }} -j `nproc` &&  sudo ./b2 install --prefix ${{ env.GITHUB_WORKSPACE }} -j `nproc`
 
       - name: cmake and build
         run: |
           mkdir build
           cd build
           cmake ..
-          cmake --build . -- -j 6 -DBOOST_ROOT=${{ GITHUB_WORKSPACE }}
+          cmake --build . -- -j 6 -DBOOST_ROOT=${{ env.GITHUB_WORKSPACE }}
           cd ..
           python3 -m venv .venv
           . .venv/bin/activate
