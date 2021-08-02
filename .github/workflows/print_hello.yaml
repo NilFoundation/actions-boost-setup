@@ -25,6 +25,12 @@ jobs:
         with:
           submodules: recursive
 
+      - name: Echo env
+        run: echo ${{ GITHUB_WORKSPACE }}
+
+      - name: Echo env2
+        run: echo ${{ env.GITHUB_WORKSPACE }}
+
       - uses: actions/setup-python@v2
         name: Install Python
         id: python-installer
@@ -55,20 +61,10 @@ jobs:
       - name: Pre-install boost
         if: steps.cache-boost.outputs.cache-hit != 'true'
         run: |
-          mkdir ~/boost &&
           wget -nv -O boost_1_76_0.tar.gz https://boostorg.jfrog.io/artifactory/main/release/1.76.0/source/boost_1_76_0.tar.gz &&
-          tar xzf boost_1_76_0.tar.gz -C ~/boost && cd ~/boost/boost_1_76_0/ &&
+          tar xzf boost_1_76_0.tar.gz -C ~/ && cd ~/boost_1_76_0/ &&
           ./bootstrap.sh --with-python=/usr/bin/python3.8 --with-python-version=3.8 &&
           ./b2 --prefix ${{ env.BOOST_PATH }} -j `nproc` &&  sudo ./b2 install --prefix ${{ env.BOOST_PATH }} -j `nproc`
-
-#      - name: ls
-#        run: ls -la ~/boost/
-#
-#      - name: ls
-#        run: ls -la ~/boost/boost_1_76_0
-#
-#      - name: Install boost
-#        run: cd ~/boost/boost_1_76_0/ && sudo ./b2 install -j `nproc`
 
       - name: cmake and build
         run: |
@@ -82,8 +78,4 @@ jobs:
           pip3 install .
           pwd
           python3 ./test/test.py
-#
-#      - name: print hello
-#        run: |
-#          . .venv/bin/activate
-#          python3 ./test/test.py
+
