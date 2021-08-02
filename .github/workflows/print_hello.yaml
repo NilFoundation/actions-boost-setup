@@ -76,8 +76,8 @@ jobs:
         run: |
           mkdir build
           cd build
-          cmake ..
-          cmake --build . -- -j 6 -DBOOST_ROOT=${{ env.workspace }}
+          cmake .. -DBOOST_ROOT=${{ env.workspace }}
+          cmake --build . -- -j 6
           cd ..
           python3 -m venv .venv
           . .venv/bin/activate
