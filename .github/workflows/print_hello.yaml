@@ -50,10 +50,17 @@ jobs:
       - name: Pre-install boost
         if: steps.cache-boost.outputs.cache-hit != 'true'
         run: |
-          wget -nv -O boost.tar.gz https://boostorg.jfrog.io/artifactory/main/release/${{ env.boost_version }}/source/boost_${{ env.boost_version_load }}.tar.gz &&
-          tar xzf boost.tar.gz -C ~/ && cd ~/boost_${{ env.boost_version_load }}/ &&
+          if [[ ${{ matrix.os }} == ubuntu* ]]
+          then
+            wget -nv -O boost.tar.gz https://boostorg.jfrog.io/artifactory/main/release/${{ env.boost_version }}/source/boost_${{ env.boost_version_load }}.tar.gz &&
+            tar xzf boost.tar.gz -C ~/
+          else
+            wget -nv -O boost.tar.gz https://boostorg.jfrog.io/artifactory/main/release/${{ env.boost_version }}/source/boost_${{ env.boost_version_load }}.7z &&
+            7z x boost.7z
+          fi
+           cd ~/boost_${{ env.boost_version_load }}/ &&
           ./bootstrap.sh --with-python=/usr/bin/python${{ env.python_version }} --with-python-version=${{ env.python_version }} --prefix=${{ env.root_workspace }}/boost &&
-          ./b2 -j `nproc` &&  sudo ./b2 install -j `nproc` && ls project-config.jam && pwd
+          ./b2 -j `nproc` &&  sudo ./b2 install -j `nproc`
 
       - name: cmake and build
         run: |
@@ -62,9 +69,8 @@ jobs:
           cmake .. -DBOOST_ROOT=${{ env.root_workspace }}/boost
           cmake --build . -- -j `nproc`
           cd ..
-          python${{ env.python_version }} -m venv .venv
+          python3 -m venv .venv
           . .venv/bin/activate
-          pip${{ env.python_version }} install .
+          pip3 install .
           pwd
-          python${{ env.python_version }} ./test/test.py
-
+          python3 ./test/test.py
