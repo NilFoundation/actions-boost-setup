@@ -6,7 +6,7 @@ jobs:
   build_wheels:
     name: Check on ${{ matrix.os }}
     env:
-      BOOST-PATH: /usr/local
+      BOOST_PATH: /usr/local
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -33,8 +33,8 @@ jobs:
 
       - name: Chown for boost
         run: |
-          sudo chown -R $USER:$USER ${{ BOOST-PATH }}/include/
-          sudo chown -R $USER:$USER ${{ BOOST-PATH }}/lib/
+          sudo chown -R $USER:$USER ${{ env.BOOST_PATH }}/include/
+          sudo chown -R $USER:$USER ${{ env.BOOST_PATH }}/lib/
 
       - name: ls
         run: ls -la
@@ -46,10 +46,10 @@ jobs:
         uses: actions/cache@v2
         with:
           path: |
-            ${{ BOOST-PATH }}/include/boost
-            ${{ BOOST-PATH }}/lib/cmake/boost_*
-            ${{ BOOST-PATH }}/lib/libboost_*
-            ${{ BOOST-PATH }}/lib/cmake/Boost*
+            ${{ env.BOOST_PATH }}/include/boost
+            ${{ env.BOOST_PATH }}/lib/cmake/boost_*
+            ${{ env.BOOST_PATHH }}/lib/libboost_*
+            ${{ env.BOOST_PATH }}/lib/cmake/Boost*
           key: ${{ runner.os }}-boost-more-cache1
 
       - name: Pre-install boost
@@ -58,7 +58,7 @@ jobs:
           mkdir ~/boost &&
           wget -nv -O boost_1_76_0.tar.gz https://boostorg.jfrog.io/artifactory/main/release/1.76.0/source/boost_1_76_0.tar.gz &&
           tar xzf boost_1_76_0.tar.gz -C ~/boost && cd ~/boost/boost_1_76_0/ &&
-          ./bootstrap.sh --with-python=/usr/bin/python3.8 --with-python-version=3.8 --prefix ${{ BOOST-PATH }} &&
+          ./bootstrap.sh --with-python=/usr/bin/python3.8 --with-python-version=3.8 --prefix ${{ env.BOOST_PATH }} &&
           ./b2 -j `nproc` &&  sudo ./b2 install -j `nproc`
 
 #      - name: ls
