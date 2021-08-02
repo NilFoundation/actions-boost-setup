@@ -57,11 +57,10 @@ jobs:
         uses: actions/cache@v2
         with:
           path: |
-            ${{ env.workspace }}/include/boost
-            ${{ env.workspace }}/lib/
+            ${{ env.workspace }}/boost
 #            ${{ env.BOOST_PATH }}/lib/libboost_*
 #            ${{ env.BOOST_PATH }}/lib/cmake/Boost*
-          key: ${{ runner.os }}-boost-more-cache4
+          key: ${{ runner.os }}-boost-more-cache5
 
       - name: Pre-install boost
         if: steps.cache-boost.outputs.cache-hit != 'true'
