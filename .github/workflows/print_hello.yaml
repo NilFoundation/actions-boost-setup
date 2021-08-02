@@ -6,7 +6,7 @@ jobs:
   build_wheels:
     name: Check on ${{ matrix.os }}
     env:
-      BOOST_VERSION: "1.76.0"
+      boost_version: "1.76.0"
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -24,18 +24,12 @@ jobs:
         id: step_one
         run: |
           echo "workspace=$GITHUB_WORKSPACE" >> $GITHUB_ENV
-          echo "boost_version_load=$(echo ${{ env.BOOST_VERSION }} | sed "s/\./\_/")"  >> $GITHUB_ENV
+          echo "boost_version_load=$(echo ${{ env.BOOST_VERSION }} | sed "s/\./\_/g")"  >> $GITHUB_ENV
 
       - name: Checkout code
         uses: actions/checkout@v2
         with:
           submodules: recursive
-
-      - name: Echo env
-        run: echo ${echo "${{ env.BOOST_VERSION }}" | sed "s/./_/"}
-
-      - name: Echo env2
-        run: echo ${{ env.workspace }}
 
       - uses: actions/setup-python@v2
         name: Install Python
@@ -61,13 +55,13 @@ jobs:
             ${{ env.workspace }}/boost
 #            ${{ env.BOOST_PATH }}/lib/libboost_*
 #            ${{ env.BOOST_PATH }}/lib/cmake/Boost*
-          key: ${{ runner.os }}-boost-more-cache5
+          key: ${{ runner.os }}-boost-more-cache6
 
       - name: Pre-install boost
         if: steps.cache-boost.outputs.cache-hit != 'true'
         run: |
-          wget -nv -O boost.tar.gz https://boostorg.jfrog.io/artifactory/main/release/${{ env.BOOST_VERSION }}/source/boost_${ env.BOOST_VERSION/./_ }.tar.gz &&
-          tar xzf boost.tar.gz -C ~/ && cd ~/boost_${ env.BOOST_VERSION/./_ }/ &&
+          wget -nv -O boost.tar.gz https://boostorg.jfrog.io/artifactory/main/release/${{ env.boost_version }}/source/boost_${{ env.boost_version_load }}.tar.gz &&
+          tar xzf boost.tar.gz -C ~/ && cd ~/boost_${{ env.boost_version_load }}/ &&
           ./bootstrap.sh --with-python=/usr/bin/python3.8 --with-python-version=3.8 --prefix=${{ env.workspace }}/boost &&
           ./b2 -j `nproc` &&  sudo ./b2 install -j `nproc` && ls project-config.jam && pwd
 
