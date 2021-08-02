@@ -24,7 +24,7 @@ jobs:
         id: step_one
         run: |
           echo "workspace=$GITHUB_WORKSPACE" >> $GITHUB_ENV
-          echo "boost_version_load=$(echo ${{ env.BOOST_VERSION }} | sed "s/\./\_/g")"  >> $GITHUB_ENV
+          echo "boost_version_load=$(echo ${{ env.boost_version }} | sed "s/\./\_/g")"  >> $GITHUB_ENV
 
       - name: Checkout code
         uses: actions/checkout@v2
