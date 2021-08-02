@@ -56,6 +56,15 @@ jobs:
           ./bootstrap.sh --with-python=/usr/bin/python${{ env.python_version }} --with-python-version=${{ env.python_version }} --prefix=~/boost &&
           ./b2 -j `nproc` &&  sudo ./b2 install -j `nproc`
 
+      - name: echo1
+        run: ls ~/
+
+      - name: echo2
+        run: cd ~/ && pwd
+
+      - name: echo3
+        run: ls ~/boost
+
       - name: cmake and build
         run: |
           mkdir build
