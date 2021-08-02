@@ -56,18 +56,18 @@ jobs:
           ./bootstrap.sh --with-python=/usr/bin/python${{ env.python_version }} --with-python-version=${{ env.python_version }} --prefix=~/boost &&
           ./b2 -j `nproc` &&  sudo ./b2 install -j `nproc`
 
-#      - name: cmake and build
-#        run: |
-#          mkdir build
-#          cd build
-#          cmake .. -DBOOST_ROOT=${{ env.root_workspace }}/boost
-#          cmake --build . -- -j `nproc`
-#          cd ..
-#          export BOOST_ROOT=${{ env.root_workspace }}/boost
-#          export BOOST_INCLUDE=${{ env.root_workspace }}/boost/include
-#          export BOOST_LIBDIR=${{ env.root_workspace }}/boost/lib
-#          python3 -m venv .venv
-#          . .venv/bin/activate
-#          pip3 install .
-#          pwd
-#          python3 ./test/test.py
+      - name: cmake and build
+        run: |
+          mkdir build
+          cd build
+          cmake .. -DBOOST_ROOT=~/boost
+          cmake --build . -- -j `nproc`
+          cd ..
+          export BOOST_ROOT=~/boost
+          export BOOST_INCLUDE=~/boost/include
+          export BOOST_LIBDIR=~/boost/lib
+          python3 -m venv .venv
+          . .venv/bin/activate
+          pip3 install .
+          pwd
+          python3 ./test/test.py
