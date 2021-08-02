@@ -26,10 +26,7 @@ jobs:
           submodules: recursive
 
       - name: Echo env
-        run: echo ${{ GITHUB_WORKSPACE }}
-
-      - name: Echo env2
-        run: echo ${{ env.GITHUB_WORKSPACE }}
+        run: echo $GITHUB_WORKSPACE
 
       - uses: actions/setup-python@v2
         name: Install Python
