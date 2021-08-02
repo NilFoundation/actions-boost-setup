@@ -2,12 +2,11 @@ name: print hello
 
 on: [push, pull_request]
 
-env:
-  BOOST-PATH: /usr/local
-
 jobs:
   build_wheels:
     name: Check on ${{ matrix.os }}
+    env:
+      BOOST-PATH: /usr/local
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
