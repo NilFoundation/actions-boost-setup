@@ -62,15 +62,15 @@ jobs:
 #            ${{ env.BOOST_PATH }}/lib/cmake/boost_*
 #            ${{ env.BOOST_PATH }}/lib/libboost_*
 #            ${{ env.BOOST_PATH }}/lib/cmake/Boost*
-          key: ${{ runner.os }}-boost-more-cache2-${{ env.workspace }}
+          key: ${{ runner.os }}-boost-more-cache3-${{ env.workspace }}
 
       - name: Pre-install boost
         if: steps.cache-boost.outputs.cache-hit != 'true'
         run: |
           wget -nv -O boost_1_76_0.tar.gz https://boostorg.jfrog.io/artifactory/main/release/1.76.0/source/boost_1_76_0.tar.gz &&
           tar xzf boost_1_76_0.tar.gz -C ~/ && cd ~/boost_1_76_0/ &&
-          ./bootstrap.sh --with-python=/usr/bin/python3.8 --with-python-version=3.8 &&
-          ./b2 --prefix ${{ env.workspace }} -j `nproc` &&  sudo ./b2 install --prefix ${{ env.workspace }} -j `nproc`
+          ./bootstrap.sh --with-python=/usr/bin/python3.8 --with-python-version=3.8 --prefix=${{ env.workspace }} &&
+          ./b2 -j `nproc` &&  sudo ./b2 install -j `nproc` && ls project-config.jam
 
       - name: cmake and build
         run: |
