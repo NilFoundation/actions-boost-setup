@@ -48,7 +48,7 @@ jobs:
           path: |
             ${{ env.BOOST_PATH }}/include/boost
             ${{ env.BOOST_PATH }}/lib/cmake/boost_*
-            ${{ env.BOOST_PATHH }}/lib/libboost_*
+            ${{ env.BOOST_PATH }}/lib/libboost_*
             ${{ env.BOOST_PATH }}/lib/cmake/Boost*
           key: ${{ runner.os }}-boost-more-cache1
 
@@ -58,8 +58,8 @@ jobs:
           mkdir ~/boost &&
           wget -nv -O boost_1_76_0.tar.gz https://boostorg.jfrog.io/artifactory/main/release/1.76.0/source/boost_1_76_0.tar.gz &&
           tar xzf boost_1_76_0.tar.gz -C ~/boost && cd ~/boost/boost_1_76_0/ &&
-          ./bootstrap.sh --with-python=/usr/bin/python3.8 --with-python-version=3.8 --prefix ${{ env.BOOST_PATH }} &&
-          ./b2 -j `nproc` &&  sudo ./b2 install -j `nproc`
+          ./bootstrap.sh --with-python=/usr/bin/python3.8 --with-python-version=3.8 &&
+          ./b2 --prefix ${{ env.BOOST_PATH }} -j `nproc` &&  sudo ./b2 install --prefix ${{ env.BOOST_PATH }} -j `nproc`
 
 #      - name: ls
 #        run: ls -la ~/boost/
