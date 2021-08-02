@@ -7,6 +7,7 @@ jobs:
     name: Check on ${{ matrix.os }}
     env:
       boost_version: "1.76.0"
+      python_version: "3.8"
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -20,10 +21,11 @@ jobs:
         with:
           access_token: ${{ github.token }}
 
-      - name: Set the value
-        id: step_one
+      - name: Set additional env value
+        id: set_env_value
         run: |
           echo "workspace=$GITHUB_WORKSPACE" >> $GITHUB_ENV
+          echo "root_workspace=$GITHUB_WORKSPACE/../" >> $GITHUB_ENV
           echo "boost_version_load=$(echo ${{ env.boost_version }} | sed "s/\./\_/g")"  >> $GITHUB_ENV
 
       - name: Checkout code
@@ -35,26 +37,14 @@ jobs:
         name: Install Python
         id: python-installer
         with:
-          python-version: '3.8'
-
-#      - name: Chown for boost
-#        run: |
-#          sudo chown -R $USER:$USER ${{ env.BOOST_PATH }}/include/
-#          sudo chown -R $USER:$USER ${{ env.BOOST_PATH }}/lib/
-
-      - name: ls
-        run: ls -la
-      - name: python version
-        run: echo ${{ steps.python-installer.outputs.python-version }} 
+          python-version: ${{ env.python_version }}
 
       - name: Cache boost
         id: cache-boost
         uses: actions/cache@v2
         with:
           path: |
-            ${{ env.workspace }}/boost
-#            ${{ env.BOOST_PATH }}/lib/libboost_*
-#            ${{ env.BOOST_PATH }}/lib/cmake/Boost*
+            ${{ env.root_workspace }}/boost
           key: ${{ runner.os }}-boost-more-cache6
 
       - name: Pre-install boost
@@ -62,19 +52,19 @@ jobs:
         run: |
           wget -nv -O boost.tar.gz https://boostorg.jfrog.io/artifactory/main/release/${{ env.boost_version }}/source/boost_${{ env.boost_version_load }}.tar.gz &&
           tar xzf boost.tar.gz -C ~/ && cd ~/boost_${{ env.boost_version_load }}/ &&
-          ./bootstrap.sh --with-python=/usr/bin/python3.8 --with-python-version=3.8 --prefix=${{ env.workspace }}/boost &&
+          ./bootstrap.sh --with-python=/usr/bin/python${{ env.python_version }} --with-python-version=${{ env.python_version }} --prefix=${{ env.root_workspace }}/boost &&
           ./b2 -j `nproc` &&  sudo ./b2 install -j `nproc` && ls project-config.jam && pwd
 
       - name: cmake and build
         run: |
           mkdir build
           cd build
-          cmake .. -DBOOST_ROOT=${{ env.workspace }}/boost
-          cmake --build . -- -j 6
+          cmake .. -DBOOST_ROOT=${{ env.root_workspace }}/boost
+          cmake --build . -- -j `nproc`
           cd ..
-          python3 -m venv .venv
+          python${{ env.python_version }} -m venv .venv
           . .venv/bin/activate
-          pip3 install .
+          pip${{ env.python_version }} install .
           pwd
-          python3 ./test/test.py
+          python${{ env.python_version }} ./test/test.py
 
