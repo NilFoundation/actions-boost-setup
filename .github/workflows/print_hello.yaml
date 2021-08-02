@@ -57,12 +57,11 @@ jobs:
         uses: actions/cache@v2
         with:
           path: |
-            $GITHUB_WORKSPACE
-#            ${{ env.BOOST_PATH }}/include/boost
-#            ${{ env.BOOST_PATH }}/lib/cmake/boost_*
+            ${{ env.workspace }}/include/boost
+            ${{ env.workspace }}/lib/
 #            ${{ env.BOOST_PATH }}/lib/libboost_*
 #            ${{ env.BOOST_PATH }}/lib/cmake/Boost*
-          key: ${{ runner.os }}-boost-more-cache3-${{ env.workspace }}
+          key: ${{ runner.os }}-boost-more-cache4-${{ env.workspace }}
 
       - name: Pre-install boost
         if: steps.cache-boost.outputs.cache-hit != 'true'
@@ -71,6 +70,9 @@ jobs:
           tar xzf boost_1_76_0.tar.gz -C ~/ && cd ~/boost_1_76_0/ &&
           ./bootstrap.sh --with-python=/usr/bin/python3.8 --with-python-version=3.8 --prefix=${{ env.workspace }} &&
           ./b2 -j `nproc` &&  sudo ./b2 install -j `nproc` && ls project-config.jam
+
+      - name: echo1
+        run: ls ${{ env.workspace }}/include/lib
 
       - name: cmake and build
         run: |
