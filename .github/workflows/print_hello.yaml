@@ -49,26 +49,27 @@ jobs:
         uses: actions/cache@v2
         with:
           path: |
-            ${{ env.BOOST_PATH }}/include/boost
-            ${{ env.BOOST_PATH }}/lib/cmake/boost_*
-            ${{ env.BOOST_PATH }}/lib/libboost_*
-            ${{ env.BOOST_PATH }}/lib/cmake/Boost*
-          key: ${{ runner.os }}-boost-more-cache1-$GITHUB_WORKSPACE
+            $GITHUB_WORKSPACE
+#            ${{ env.BOOST_PATH }}/include/boost
+#            ${{ env.BOOST_PATH }}/lib/cmake/boost_*
+#            ${{ env.BOOST_PATH }}/lib/libboost_*
+#            ${{ env.BOOST_PATH }}/lib/cmake/Boost*
+          key: ${{ runner.os }}-boost-more-cache2-$GITHUB_WORKSPACE
 
       - name: Pre-install boost
         if: steps.cache-boost.outputs.cache-hit != 'true'
         run: |
           wget -nv -O boost_1_76_0.tar.gz https://boostorg.jfrog.io/artifactory/main/release/1.76.0/source/boost_1_76_0.tar.gz &&
           tar xzf boost_1_76_0.tar.gz -C ~/ && cd ~/boost_1_76_0/ &&
-          ./bootstrap.sh --with-python=/usr/bin/python3.8.11 --with-python-version=3.8.11 &&
+          ./bootstrap.sh --with-python=/usr/bin/python3.8 --with-python-version=3.8 &&
           ./b2 --prefix $GITHUB_WORKSPACE -j `nproc` &&  sudo ./b2 install --prefix $GITHUB_WORKSPACE -j `nproc`
 
       - name: cmake and build
         run: |
           mkdir build
           cd build
-          cmake ../
-          cmake --build . -- -j 6
+          cmake ..
+          cmake --build . -- -j 6 -DBOOST_ROOT=$GITHUB_WORKSPACE
           cd ..
           python3 -m venv .venv
           . .venv/bin/activate
