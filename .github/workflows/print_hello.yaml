@@ -47,20 +47,16 @@ jobs:
             ${{ env.root_workspace }}/boost
           key: ${{ runner.os }}-boost-more-cache6
 
-      - name: Pre-install boost
-        if: steps.cache-boost.outputs.cache-hit != 'true'
-        run: |
-          if [[ ${{ matrix.os }} == ubuntu* ]]
-          then
-            wget -nv -O boost.tar.gz https://boostorg.jfrog.io/artifactory/main/release/${{ env.boost_version }}/source/boost_${{ env.boost_version_load }}.tar.gz &&
-            tar xzf boost.tar.gz -C ~/
-          else
-            wget -nv -O boost.tar.gz https://boostorg.jfrog.io/artifactory/main/release/${{ env.boost_version }}/source/boost_${{ env.boost_version_load }}.7z &&
-            7z x boost.7z
-          fi
-           cd ~/boost_${{ env.boost_version_load }}/ &&
-          ./bootstrap.sh --with-python=/usr/bin/python${{ env.python_version }} --with-python-version=${{ env.python_version }} --prefix=${{ env.root_workspace }}/boost &&
-          ./b2 -j `nproc` &&  sudo ./b2 install -j `nproc`
+      - name: Cache boost2
+        run: cd ~/ && pwd
+#      - name: Install boost
+#        if: steps.cache-boost.outputs.cache-hit != 'true'
+#        run: |
+#          wget -nv -O boost.tar.gz https://boostorg.jfrog.io/artifactory/main/release/${{ env.boost_version }}/source/boost_${{ env.boost_version_load }}.tar.gz &&
+#          tar xzf boost.tar.gz -C ~/ &&
+#          cd ~/boost_${{ env.boost_version_load }}/ &&
+#          ./bootstrap.sh --with-python=/usr/bin/python${{ env.python_version }} --with-python-version=${{ env.python_version }} --prefix=${{ env.root_workspace }}/boost &&
+#          ./b2 -j `nproc` &&  sudo ./b2 install -j `nproc`
 
 #      - name: cmake and build
 #        run: |
@@ -69,6 +65,9 @@ jobs:
 #          cmake .. -DBOOST_ROOT=${{ env.root_workspace }}/boost
 #          cmake --build . -- -j `nproc`
 #          cd ..
+#          export BOOST_ROOT=${{ env.root_workspace }}/boost
+#          export BOOST_INCLUDE=${{ env.root_workspace }}/boost/include
+#          export BOOST_LIBDIR=${{ env.root_workspace }}/boost/lib
 #          python3 -m venv .venv
 #          . .venv/bin/activate
 #          pip3 install .
