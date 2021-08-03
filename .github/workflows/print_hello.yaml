@@ -21,6 +21,9 @@ jobs:
         with:
           access_token: ${{ github.token }}
 
+      - name: Echo
+        run: echo $GITHUB_WORKSPACE
+
       - name: Set additional env value
         id: set_env_value
         run: |
