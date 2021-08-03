@@ -12,7 +12,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        os: [ubuntu-latest, macos-latest]
 
     steps:
       - name: Cancel previous runs on the same branch
@@ -28,6 +28,16 @@ jobs:
           cd $GITHUB_WORKSPACE/../
           echo "root_workspace=$(pwd)" >> $GITHUB_ENV
           echo "boost_version_load=$(echo ${{ env.boost_version }} | sed "s/\./\_/g")"  >> $GITHUB_ENV
+
+      - name: Set nproc
+        if: startsWith(matrix.os, 'macos')
+        run: |
+          echo "nproc=$(sysctl -n hw.ncpu)" >> $GITHUB_ENV
+
+      - name: Set nproc
+        if: startsWith(matrix.os, 'ubuntu')
+        run: |
+          echo "nproc=`nproc`" >> $GITHUB_ENV
 
       - name: Checkout code
         uses: actions/checkout@v2
@@ -55,14 +65,14 @@ jobs:
           tar xzf boost.tar.gz -C ~/ &&
           cd ~/boost_${{ env.boost_version_load }}/ &&
           ./bootstrap.sh --with-python=/usr/bin/python${{ env.python_version }} --with-python-version=${{ env.python_version }} --prefix=${{ env.root_workspace }}/boost &&
-          ./b2 -j `nproc` &&  sudo ./b2 install -j `nproc`
+          ./b2 -j ${{ env.nproc }} &&  sudo ./b2 install -j ${{ env.nproc }}
 
       - name: cmake and build
         run: |
           mkdir build
           cd build
           cmake .. -DBOOST_ROOT=${{ env.root_workspace }}/boost
-          cmake --build . -- -j `nproc`
+          cmake --build . -- -j ${{ env.nproc }}
           cd ..
           export BOOST_ROOT=${{ env.root_workspace }}/boost
           export BOOST_INCLUDE=${{ env.root_workspace }}/boost/include
