@@ -30,13 +30,13 @@ jobs:
           echo "boost_version_load=$(echo ${{ env.boost_version }} | sed "s/\./\_/g")"  >> $GITHUB_ENV
 
       - name: Echo
-        run: ${{ env.workspace }}
+        run: echo ${{ env.workspace }}
 
       - name: Echo
-        run: ${{ env.root_workspace }}
+        run: echo ${{ env.root_workspace }}
 
       - name: Echo
-        run: ${{ env.boost_version_load }}
+        run: echo ${{ env.boost_version_load }}
 
       - name: Checkout code
         uses: actions/checkout@v2
