@@ -12,7 +12,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest]
+        os: [ubuntu-latest, windows-latest, macos-latest]
 
     steps:
       - name: Cancel previous runs on the same branch
@@ -21,9 +21,6 @@ jobs:
         with:
           access_token: ${{ github.token }}
 
-      - name: Echo
-        run: echo $GITHUB_WORKSPACE
-
       - name: Set additional env value
         id: set_env_value
         run: |
@@ -31,15 +28,6 @@ jobs:
           cd $GITHUB_WORKSPACE/../
           echo "root_workspace=$(pwd)" >> $GITHUB_ENV
           echo "boost_version_load=$(echo ${{ env.boost_version }} | sed "s/\./\_/g")"  >> $GITHUB_ENV
-
-      - name: Echo
-        run: echo ${{ env.workspace }}
-
-      - name: Echo
-        run: echo ${{ env.root_workspace }}
-
-      - name: Echo
-        run: echo ${{ env.boost_version_load }}
 
       - name: Checkout code
         uses: actions/checkout@v2
@@ -58,7 +46,7 @@ jobs:
         with:
           path: |
             ${{ env.root_workspace }}/boost
-          key: ${{ runner.os }}-boost-more-cache8
+          key: boost-${{ runner.os }}-${{ env.root_workspace }}-${{ env.python_version }
 
       - name: Install boost
         if: steps.cache-boost.outputs.cache-hit != 'true'
