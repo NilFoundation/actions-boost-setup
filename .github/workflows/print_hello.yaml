@@ -46,7 +46,7 @@ jobs:
         with:
           path: |
             ${{ env.root_workspace }}/boost
-          key: boost-${{ runner.os }}-${{ env.root_workspace }}-${{ env.python_version }
+          key: boost-${{ runner.os }}-${{ env.root_workspace }}-${{ env.python_version }}
 
       - name: Install boost
         if: steps.cache-boost.outputs.cache-hit != 'true'
