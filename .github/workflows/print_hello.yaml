@@ -7,7 +7,7 @@ jobs:
     name: Check on ${{ matrix.os }}
     env:
       boost_version: "1.76.0"
-      python_version: "3.8"
+      python_version: "3.9"
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
