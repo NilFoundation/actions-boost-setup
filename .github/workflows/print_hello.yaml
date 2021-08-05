@@ -56,7 +56,7 @@ jobs:
         with:
           path: |
             ${{ env.root_workspace }}/boost
-          key: boost-${{ runner.os }}-${{ env.root_workspace }}-${{ env.python_version }}
+          key: boost-${{ runner.os }}-${{ env.root_workspace }}-${{ env.python_version }}-1
 
       - name: Install boost
         if: steps.cache-boost.outputs.cache-hit != 'true'
@@ -64,7 +64,7 @@ jobs:
           wget -nv -O boost.tar.gz https://boostorg.jfrog.io/artifactory/main/release/${{ env.boost_version }}/source/boost_${{ env.boost_version_load }}.tar.gz &&
           tar xzf boost.tar.gz -C ~/ &&
           cd ~/boost_${{ env.boost_version_load }}/ &&
-          ./bootstrap.sh --with-python=/usr/bin/python${{ env.python_version }} --with-python-version=${{ env.python_version }} --prefix=${{ env.root_workspace }}/boost &&
+          ./bootstrap.sh --with-python=/opt/hostedtoolcache/Python/3.9.6/x64/bin/python${{ env.python_version }} --with-python-version=${{ env.python_version }} --prefix=${{ env.root_workspace }}/boost &&
           ./b2 -j ${{ env.nproc }} &&  sudo ./b2 install -j ${{ env.nproc }}
 
       - name: cmake and build
